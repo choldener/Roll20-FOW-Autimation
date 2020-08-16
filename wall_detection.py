@@ -5,6 +5,8 @@ import time
 import fire
 import scipy.spatial.distance
 
+pyautogui.FAILSAFE = True
+
 def wall_detection(IMAGE, approx = True, kernel = (15,15),epsilon_value= 0.005):
     
     img = cv2.imread(IMAGE) 
@@ -26,7 +28,6 @@ def wall_detection(IMAGE, approx = True, kernel = (15,15),epsilon_value= 0.005):
     dilation = cv2.dilate(thresh1, rect_kernel, iterations = 1) 
     contours, hierarchy = cv2.findContours(dilation, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)[-2:]
     im2 = img.copy()
-
     cv2.drawContours(im2, contours, -1, (0,255,0), 3)
     #
     ####################
@@ -75,7 +76,8 @@ def wall_detection(IMAGE, approx = True, kernel = (15,15),epsilon_value= 0.005):
     time.sleep(3)
     if approx == True:
         print('approx')
-        for array, index in enumerate(contours):
+        for array in contours:
+            #print(array)
             epsilon = epsilon_value*cv2.arcLength(array,True)
             approx = cv2.approxPolyDP(array,epsilon,True)
             approx = np.vstack(approx)
@@ -84,7 +86,6 @@ def wall_detection(IMAGE, approx = True, kernel = (15,15),epsilon_value= 0.005):
                 x = c[0] + box[0]
                 y = c[1] + box[1]
                 pyautogui.click(x, y)
-            #print(conttest[0][0] + box[0] , conttest[0][1]+box[1])
             pyautogui.click(approx[0][0] + box[0] , approx[0][1]+box[1])
             pyautogui.click(approx[0][0] + box[0] , approx[0][1]+box[1], button='right')
     else: 
