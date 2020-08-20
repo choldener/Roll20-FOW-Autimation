@@ -105,6 +105,6 @@ def wall_detection(IMAGE, approx = True, kernel = (15,15),epsilon_value= 0.005):
     #
     ####################
     
-# if __name__ == "__main__":
-#     fire.Fire(wall_detection)
+if __name__ == "__main__":
+    fire.Fire(wall_detection)
     
