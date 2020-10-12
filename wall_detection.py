@@ -4,21 +4,44 @@ import numpy as np
 import time
 import fire
 import scipy.spatial.distance
+import PIL
 
 pyautogui.FAILSAFE = True
 
-def wall_detection(IMAGE, approx = True, kernel = (15,15),epsilon_value= 0.005):
+def wall_detection(
+                   approx = True,
+                   contour_test = True,
+                   kernel = (15,15),
+                   epsilon_value= 0.005
+                   ):
     
-    img = cv2.imread(IMAGE) 
-    
-    ####################
-    #IMAGE RECOG
-    #
-    box = pyautogui.locateOnScreen(img, confidence=0.9)
-    if box is None:
-        raise RuntimeError("Could not detect iamge on screen")
-    #
-    ####################
+    global down
+    down = False
+    def event_handle(event,x,y,flags, params):
+            global down, point_1, point_2, sub_img
+            if event == cv2.EVENT_LBUTTONDOWN:
+                    down = True
+                    point_1 = (x,y)
+            elif event == cv2.EVENT_MOUSEMOVE and down:
+                    img_copy = img.copy()
+                    cv2.rectangle(img_copy, point_1, (x,y), (0,0,255),2)
+                    cv2.imshow("Image", img_copy)
+            elif event == cv2.EVENT_LBUTTONUP:
+                    down = False
+                    sub_img = img[point_1[1]:y,point_1[0]:x]
+                    point_2 = (x,y)  
+                    cv2.destroyAllWindows()
+                    cv2.imshow("Press 0 to close", sub_img)
+     
+    img = pyautogui.screenshot("straight_to_disk.png")
+    img = cv2.imread("straight_to_disk.png",1)
+    cv2.namedWindow('image')
+    cv2.setMouseCallback('image', event_handle)
+    cv2.imshow('image', img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    img = sub_img
+
     
     ####################
     #Computer Vision
@@ -34,16 +57,11 @@ def wall_detection(IMAGE, approx = True, kernel = (15,15),epsilon_value= 0.005):
 
     ####################
     # Testing
-    # 
+    #
     # for array in contours:
     #     conttest = np.vstack(array)
     #     #print(conttest)
     #     print("SPACE")
-    #     # global distance
-    #     # for c in conttest:
-    #     #     #calculate distance
-    #     #     pass
-    #     # if distance > 10:
     #     for index, c in enumerate(conttest):
     #         print(c)
     #         print(index)
@@ -53,27 +71,29 @@ def wall_detection(IMAGE, approx = True, kernel = (15,15),epsilon_value= 0.005):
     #             print('distance: '+ str(d))
     #         x = c[0] #+ box[0]
     #         y = c[1] #+ box[1]
-            #print('x:' + str(x))
-            #print('y:'+str(y))
-            #d = scipy.spatial.distance.cdist(x,y)
-            #print(d)
-        #print(conttest)
-        #print('x_first: ' + str(conttest[0][0] ))#+ box[0]))
-        #print('y_first:'+ str(conttest[0][1] ))#+ box[1]))
-    #
+    #         print('x:' + str(x))
+    #         print('y:'+str(y))
+    #         #d = scipy.spatial.distance.cdist(x,y)
+    #         print(d)
+    #     print(conttest)
+    #     print('x_first: ' + str(conttest[0][0] ))#+ box[0]))
+    #     print('y_first:'+ str(conttest[0][1] ))#+ box[1]))
+    
     ####################
     #Contour testing
     # 
-    cv2.imshow("Wall Detection", im2)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    if contour_test == True:
+        cv2.imshow("Wall Detection", im2)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
     #
     ####################
-    
+    box = point_1
     ####################
     #Clicking Script
     #
     time.sleep(3)
+    print(box[0], box[1])
     if approx == True:
         print('approx')
         for array in contours:
@@ -81,7 +101,7 @@ def wall_detection(IMAGE, approx = True, kernel = (15,15),epsilon_value= 0.005):
             epsilon = epsilon_value*cv2.arcLength(array,True)
             approx = cv2.approxPolyDP(array,epsilon,True)
             approx = np.vstack(approx)
-            time.sleep(1)
+            #time.sleep(1)
             for c in approx:
                 x = c[0] + box[0]
                 y = c[1] + box[1]
@@ -105,6 +125,7 @@ def wall_detection(IMAGE, approx = True, kernel = (15,15),epsilon_value= 0.005):
     #
     ####################
     
-if __name__ == "__main__":
-    fire.Fire(wall_detection)
+# if __name__ == "__main__":
+#     fire.Fire(wall_detection)
     
+wall_detection(approx=True)
