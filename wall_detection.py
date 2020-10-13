@@ -14,7 +14,9 @@ def wall_detection(
                    kernel = (15,15),
                    epsilon_value= 0.005
                    ):
-    
+    ####################
+    #Image Section
+    #
     global down
     down = False
     def event_handle(event,x,y,flags, params):
@@ -41,7 +43,9 @@ def wall_detection(
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     img = sub_img
-
+    box = point_1
+    #
+    ####################
     
     ####################
     #Computer Vision
@@ -56,30 +60,6 @@ def wall_detection(
     ####################
 
     ####################
-    # Testing
-    #
-    # for array in contours:
-    #     conttest = np.vstack(array)
-    #     #print(conttest)
-    #     print("SPACE")
-    #     for index, c in enumerate(conttest):
-    #         print(c)
-    #         print(index)
-    #         if index > 0:
-    #             print(array[index - 1])
-    #             d = scipy.spatial.distance.cdist(array[index-1],array[index])
-    #             print('distance: '+ str(d))
-    #         x = c[0] #+ box[0]
-    #         y = c[1] #+ box[1]
-    #         print('x:' + str(x))
-    #         print('y:'+str(y))
-    #         #d = scipy.spatial.distance.cdist(x,y)
-    #         print(d)
-    #     print(conttest)
-    #     print('x_first: ' + str(conttest[0][0] ))#+ box[0]))
-    #     print('y_first:'+ str(conttest[0][1] ))#+ box[1]))
-    
-    ####################
     #Contour testing
     # 
     if contour_test == True:
@@ -88,7 +68,7 @@ def wall_detection(
         cv2.destroyAllWindows()
     #
     ####################
-    box = point_1
+    
     ####################
     #Clicking Script
     #
@@ -125,7 +105,7 @@ def wall_detection(
     #
     ####################
     
-# if __name__ == "__main__":
-#     fire.Fire(wall_detection)
+if __name__ == "__main__":
+    fire.Fire(wall_detection)
     
-wall_detection(approx=True)
+#wall_detection(approx=True)
