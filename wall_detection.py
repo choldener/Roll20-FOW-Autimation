@@ -4,6 +4,7 @@ import numpy as np
 import time
 import fire
 import scipy.spatial.distance
+import os
 
 pyautogui.FAILSAFE = True
 
@@ -104,6 +105,7 @@ def wall_detection(
                 pyautogui.click(x, y)
             pyautogui.click(conttest[0][0] + box[0], conttest[0][1] + box[1])
             pyautogui.click(conttest[0][0] + box[0], conttest[0][1] + box[1], button='right')
+    os.remove("straight_to_disk.png")
     #
     ####################
 
